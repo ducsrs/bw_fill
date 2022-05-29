@@ -8,45 +8,27 @@ from main import bw_fill
 
 def open_file():
     global img
-    img = tk.filedialog.askopenfilename(
-        initialdir='/',
-        filetypes=(('Image Files', ('*.gif', '*.jpg', '*.jpeg', '*.png')), ('All Files', '*.*'))
-    )
-    display_original(img)
+    img = Image.open(
+        tk.filedialog.askopenfilename(
+            initialdir='/',
+            filetypes=(('Image Files', ('*.gif', '*.jpg', '*.jpeg', '*.png')), ('All Files', '*.*'))
+        ))
+    display_original()
 
 
-def display_original(img: str):
+def display_original():
+    global img
     global thumb
     global preview
     global confirm_button
     global cancel_button
-    thumb = Image.open(img)
+    thumb = img.copy()
     thumb.thumbnail((130, 130))
     thumb = ImageTk.PhotoImage(thumb)
     preview.create_image(72, 72, image=thumb)
     confirm_button.config(state='active')
     cancel_button.config(state='active')
     # print(splitext(img))
-
-
-def display_processed():
-    global root
-    global processed
-    global bw_thumb
-
-    bw_thumb = processed.copy()
-    bw_thumb.thumbnail((500, 500))
-    bw_thumb = ImageTk.PhotoImage(bw_thumb)
-
-    show = tk.Toplevel(root)
-    show.geometry('500x500')
-    show.title('Preview')
-
-    bw_preview = tk.Canvas(master=show, height=500, width=500)
-    bw_preview.create_image(252, 252, image=bw_thumb)
-    bw_preview.grid(row=0, column=0)
-
-    return show
 
 
 def cancel():
@@ -92,6 +74,26 @@ def confirm():
             confirm_button.config(state='active')
 
 
+def display_processed():
+    global root
+    global processed
+    global bw_thumb
+
+    bw_thumb = processed.copy()
+    bw_thumb.thumbnail((500, 500))
+    bw_thumb = ImageTk.PhotoImage(bw_thumb)
+
+    show = tk.Toplevel(root)
+    show.geometry('500x500')
+    show.title('Preview')
+
+    bw_preview = tk.Canvas(master=show, height=500, width=500)
+    bw_preview.create_image(252, 252, image=bw_thumb)
+    bw_preview.grid(row=0, column=0)
+
+    return show
+
+
 def ask_wait():
     global root
     wait = tk.Toplevel(root)
@@ -101,16 +103,16 @@ def ask_wait():
     tk.Label(wait, text='Processing, please wait...').pack(pady=10)
 
 
-thumb = ''
-bw_thumb = ''
-img = ''
-processed = ''
-# placeholders to dodge garbage collection
-
 root = tk.Tk()
 root.title('BwFill Utility')
 root.config(padx=20, pady=10)
 root.geometry('330x200')
+
+thumb = tk.PhotoImage()
+bw_thumb = tk.PhotoImage()
+img = Image.Image()
+processed = Image.Image()
+# placeholders to dodge garbage collection
 
 protect = tk.BooleanVar(value=True)
 
@@ -120,10 +122,9 @@ label.grid(row=0, column=0, sticky='NW')
 load_button = tk.Button(text='Open', command=open_file)
 load_button.grid(row=1, column=0, sticky='NW')
 
-protect_check = tk.Checkbutton(text="Protect text?\n(requires tesseract)",justify='left',
-                                    variable=protect, onvalue=True, offvalue=False)
+protect_check = tk.Checkbutton(text="Protect text?\n(requires tesseract)", justify='left',
+                               variable=protect, onvalue=True, offvalue=False)
 protect_check.grid(row=9, column=0)
-
 
 preview = tk.Canvas(height=137, width=137, borderwidth='2', relief='groove')
 preview.grid(row=0, column=1, rowspan=10, columnspan=2, padx=30)

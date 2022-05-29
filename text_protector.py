@@ -26,6 +26,7 @@ class Protector:
         # print(self.boxes)
 
     def check_boxes(self, x, y):
+        """Returns True if (x, y) contains text"""
         for box in self.boxes:
             if box[0] < x < (box[0] + box[2]) and box[1] < y < (box[1] + box[3]):
                 return True
