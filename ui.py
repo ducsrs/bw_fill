@@ -8,11 +8,13 @@ from main import bw_fill
 
 def open_file():
     global img
-    img = Image.open(
-        tk.filedialog.askopenfilename(
+    global filename
+
+    filename = tk.filedialog.askopenfilename(
             initialdir='/',
             filetypes=(('Image Files', ('*.gif', '*.jpg', '*.jpeg', '*.png')), ('All Files', '*.*'))
-        ))
+        )
+    img = Image.open(filename)
     display_original()
 
 
@@ -63,7 +65,7 @@ def confirm():
         popup.attributes('-topmost', True)
         if messagebox.askyesno(title='BwFill', message='Save image?'):
             popup.destroy()
-            path, ext = splitext(img)
+            path, ext = splitext(filename)
             file = filedialog.asksaveasfilename(initialfile=f'{path}_bw')
             # print(file + ext)
             processed.save(file + ext)
@@ -93,14 +95,14 @@ def display_processed():
 
     return show
 
-
-def ask_wait():
-    global root
-    wait = tk.Toplevel(root)
-    wait.geometry('200x50')
-    wait.transient()
-    wait.title('BwFill')
-    tk.Label(wait, text='Processing, please wait...').pack(pady=10)
+#
+# def ask_wait():
+#     global root
+#     wait = tk.Toplevel(root)
+#     wait.geometry('200x50')
+#     wait.transient()
+#     wait.title('BwFill')
+#     tk.Label(wait, text='Processing, please wait...').pack(pady=10)
 
 
 root = tk.Tk()
@@ -108,6 +110,7 @@ root.title('BwFill Utility')
 root.config(padx=20, pady=10)
 root.geometry('330x200')
 
+filename = ''
 thumb = tk.PhotoImage()
 bw_thumb = tk.PhotoImage()
 img = Image.Image()
