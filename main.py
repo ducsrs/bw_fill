@@ -69,3 +69,4 @@ def get_regions(img):
 
 
 # bw_fill('bar_graph.png', protect=True).show()
+# this is a comment
