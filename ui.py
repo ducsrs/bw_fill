@@ -45,15 +45,15 @@ def cancel():
 
 def confirm():
     global img
-    global processed
+    global processed_img
     global confirm_button
     global cancel_button
     # ask_wait()
     confirm_button.config(state='disabled')
     try:
-        processed = bw_fill(img, protect=protect.get())
+        processed_img = bw_fill(img, protect=protect.get())
     except TypeError:
-        messagebox.showerror(title='BwFill', message='Too many colors. Please try another image.')
+        messagebox.showerror(title='BwFill', message='There was an error. Please try another image file.')
         cancel()
         return
     except NameError:
@@ -63,12 +63,14 @@ def confirm():
     else:
         popup = display_processed()
         popup.attributes('-topmost', True)
+        popup.attributes('-topmost', False)
+
         if messagebox.askyesno(title='BwFill', message='Save image?'):
             popup.destroy()
             path, ext = splitext(filename)
-            file = filedialog.asksaveasfilename(initialfile=f'{path}_bw')
+            file = filedialog.asksaveasfilename(initialfile=f'{path}_bw{"_pr" if protect else ""}')
             # print(file + ext)
-            processed.save(file + ext)
+            processed_img.save(file + ext)
             cancel()
         else:
             popup.destroy()
@@ -78,10 +80,10 @@ def confirm():
 
 def display_processed():
     global root
-    global processed
+    global processed_img
     global bw_thumb
 
-    bw_thumb = processed.copy()
+    bw_thumb = processed_img.copy()
     bw_thumb.thumbnail((500, 500))
     bw_thumb = ImageTk.PhotoImage(bw_thumb)
 
@@ -95,7 +97,7 @@ def display_processed():
 
     return show
 
-#
+# Couldn't get this to work; popup appears after processing, defeating purpose
 # def ask_wait():
 #     global root
 #     wait = tk.Toplevel(root)
@@ -114,7 +116,7 @@ filename = ''
 thumb = tk.PhotoImage()
 bw_thumb = tk.PhotoImage()
 img = Image.Image()
-processed = Image.Image()
+processed_img = Image.Image()
 # placeholders to dodge garbage collection
 
 protect = tk.BooleanVar(value=True)

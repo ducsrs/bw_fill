@@ -8,14 +8,13 @@ if __name__ == '__main__':
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# img = PIL.Image.open('pie_chart.png')
 
 def bw_fill(img, protect=True):
     img.convert('RGB')
 
-    replacements = get_regions(img)
+    regions = get_regions(img)
 
-    color_list = sorted(replacements.items(), key=lambda c: c[1]['count'], reverse=True)
+    color_list = sorted(regions.items(), key=lambda c: c[1]['count'], reverse=True)
     # List of ((r, g, b), dict) tuples sorted high->low by count
     assign_replacements(color_list)
 
@@ -50,7 +49,7 @@ def assign_replacements(color_list):
 
 def get_regions(img):
     """Makes a dict with counts and pixels for each color"""
-    replacements = {}
+    result = {}
     # {(r, g, b) : {
     #                               count: i,
     #                               replacement: pattern,
@@ -58,15 +57,13 @@ def get_regions(img):
     for x in range(img.width):
         for y in range(img.height):
             color = img.getpixel((x, y))
-            if color not in replacements.keys():
-                replacements[color] = {'count': 1,
-                                       'pixels': [(x, y)],
-                                       'replacement': None}
+            if color not in result.keys():
+                result[color] = {'count': 1,
+                                 'pixels': [(x, y)],
+                                 'replacement': None}
             else:
-                replacements[color]['count'] += 1
-                replacements[color]['pixels'].append((x, y))
-    return replacements
-
+                result[color]['count'] += 1
+                result[color]['pixels'].append((x, y))
+    return result
 
 # bw_fill('bar_graph.png', protect=True).show()
-# this is a comment
